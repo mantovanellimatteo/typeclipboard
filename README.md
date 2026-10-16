@@ -19,6 +19,10 @@ SendInput "{Raw}" A_Clipboard
 }
 ```
 
+<p align="center">
+  <img src="docs/screenshot.png" alt="TypeClipboard – Finestra Impostazioni Liquid Glass" width="470">
+</p>
+
 ## Funzionalità
 
 - 🎯 **Scorciatoia globale personalizzabile** – predefinita **⌃⌥V**
