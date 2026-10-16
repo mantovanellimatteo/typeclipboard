@@ -2,7 +2,11 @@ import AppKit
 import CoreGraphics
 
 /// Digita un testo inviando eventi tastiera (CGEvent).
-final class Typer {
+final class Typer: ObservableObject {
+    @Published private(set) var isTyping = false
+    @Published private(set) var progress: (current: Int, total: Int) = (0, 0)
+    var onStateChange: (() -> Void)?
+
     private let queue = DispatchQueue(label: "TypeClipboard.typer")
     private let lock = NSLock()
     private var _cancelled = false
@@ -24,15 +28,18 @@ final class Typer {
         let normalized = text
             .replacingOccurrences(of: "\r\n", with: "\n")
             .replacingOccurrences(of: "\r", with: "\n")
+        let chars = Array(normalized)
         cancelled = false
+        setState(typing: true, current: 0, total: chars.count)
 
         queue.async { [self] in
+            defer { setState(typing: false, current: 0, total: 0) }
             waitForModifiersRelease()
             usleep(useconds_t(max(0, initialDelayMs)) * 1000)
             let source = CGEventSource(stateID: .hidSystemState)
             let delay = useconds_t(max(0, keyDelayMs)) * 1000
 
-            for ch in normalized {
+            for (idx, ch) in chars.enumerated() {
                 if cancelled { break }
                 switch ch {
                 case "\n": tap(KeyStroke(keyCode: Self.kReturn, shift: false, option: false), source)
@@ -44,8 +51,21 @@ final class Typer {
                         typeUnicode(String(ch), source)
                     }
                 }
+                if idx % 5 == 0 || idx == chars.count - 1 {
+                    setState(typing: true, current: idx + 1, total: chars.count)
+                }
                 if delay > 0 { usleep(delay) }
             }
+        }
+    }
+
+    private func setState(typing: Bool, current: Int, total: Int) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            let changed = self.isTyping != typing
+            self.isTyping = typing
+            self.progress = (current, total)
+            if changed { self.onStateChange?() }
         }
     }
 
