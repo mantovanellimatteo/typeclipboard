@@ -1,16 +1,19 @@
+<p align="right">
+  <strong>🇬🇧 English</strong> · <a href="README.it.md">🇮🇹 Italiano</a>
+</p>
+
 # TypeClipboard ⌨️📋
 
-**Incolla digitando.** App per la barra dei menu di macOS che digita il contenuto della clipboard
-simulando la tastiera, carattere per carattere.
+**Paste by typing.** A lightweight macOS menu bar app that types your clipboard contents character by character, emulating a physical keyboard.
 
-Pensata per tutti i casi in cui il normale ⌘V non funziona:
+Built for every scenario where standard `⌘V` paste doesn't work:
 
-- console web di VM (vSphere, Proxmox, Hyper-V, iDRAC/iLO, noVNC…)
-- TeamViewer, VNC e altri desktop remoti
-- schermata di login di Windows in console
-- campi che bloccano l'incolla
+- VM web consoles (vSphere, Proxmox, Hyper-V, iDRAC/iLO, noVNC…)
+- TeamViewer, VNC, and other remote desktop sessions
+- Windows login screens over console
+- Input fields that block clipboard paste
 
-È l'equivalente macOS di questo script AutoHotkey:
+It is the native macOS equivalent of this classic AutoHotkey script:
 
 ```autohotkey
 ^!v::
@@ -20,37 +23,39 @@ SendInput "{Raw}" A_Clipboard
 ```
 
 <p align="center">
-  <img src="docs/screenshot.png" alt="TypeClipboard – Finestra Impostazioni Liquid Glass" width="470">
+  <img src="docs/screenshot.png" alt="TypeClipboard – Liquid Glass Settings Window" width="470">
 </p>
 
-## Funzionalità
+## Features
 
-- 🎯 **Scorciatoia globale personalizzabile** – predefinita **⌃⌥V**
-- 🔤 **Keycode reali** – ogni carattere viene convertito nel tasto fisico del layout attivo (es. Italiano),
-  con Shift/Option premuti davvero: funziona anche con le console remote che ignorano l'input Unicode
-- 🌐 **Ripiego Unicode** per i caratteri non presenti nel layout (emoji ecc.)
-- ↩️ A capo → Invio, tabulazione → Tab
-- 🐢 **Ritardo tra i tasti** regolabile per console lente
-- ⏱️ **Ritardo iniziale** e attesa del rilascio dei modificatori della scorciatoia
-- ⛔ **Esc** per interrompere testi lunghi
-- 🚀 Avvio automatico al login
-- 🫥 Solo barra dei menu, nessuna icona nel Dock
+- 🎯 **Customizable global shortcut** – defaults to **⌃⌥V**
+- 🔤 **Real physical keycodes** – translates each character into the corresponding physical keystroke of the active keyboard layout (with real `Shift`/`Option` key-down/up events), so remote consoles that ignore Unicode strings work reliably
+- 🌐 **Unicode fallback** for characters not present on the active layout (emojis, etc.)
+- ↩️ Converts newlines to `Return` and tabs to `Tab`
+- 🐢 **Adjustable keystroke delay** + quick presets (*Fast*, *Balanced*, *Slow remote console*)
+- ⏱️ **Initial delay** + automatic wait for shortcut modifier release before typing starts
+- ⛔ Press **Esc** at any time to abort typing
+- 🪟 **Native Liquid Glass UI** designed for macOS Tahoe (with automatic translucent fallback on macOS 13–15)
+- 🚀 Launch at login
+- 🫥 Lives purely in the menu bar (no Dock icon)
 
-## Requisiti
+## Requirements
 
-- macOS 13 Ventura o successivo (Apple Silicon o Intel)
-- Per compilare: Xcode oppure Command Line Tools (`xcode-select --install`)
+- macOS 13 Ventura or later (Apple Silicon or Intel)
+- To build from source: Xcode or Command Line Tools (`xcode-select --install`)
 
-## Installazione
+## Installation
 
-### Da release
+### From Releases
 
-1. Scarica `TypeClipboard-x.y.z.zip` dalla pagina [Releases](https://github.com/mantovanellimatteo/typeclipboard/releases).
-2. Estrai e sposta `TypeClipboard.app` in `/Applications`.
-3. L'app è firmata ad-hoc (non notarizzata): al primo avvio fai clic destro → **Apri**, oppure
-   `xattr -dr com.apple.quarantine /Applications/TypeClipboard.app`.
+1. Download `TypeClipboard-x.y.z.zip` from the [Releases](https://github.com/mantovanellimatteo/typeclipboard/releases) page.
+2. Extract and move `TypeClipboard.app` to `/Applications`.
+3. Because the app is ad-hoc signed (not notarized), right-click → **Open** on first launch, or run:
+   ```bash
+   xattr -dr com.apple.quarantine /Applications/TypeClipboard.app
+   ```
 
-### Da sorgente
+### From Source
 
 ```bash
 git clone https://github.com/mantovanellimatteo/typeclipboard.git
@@ -60,63 +65,62 @@ cp -R build/TypeClipboard.app /Applications/
 open /Applications/TypeClipboard.app
 ```
 
-## Primo avvio: permesso Accessibilità
+## First Launch: Accessibility Permission
 
-Per inviare eventi tastiera, macOS richiede il permesso **Accessibilità**:
+To synthesize keyboard events, macOS requires **Accessibility** permission:
 
-**Impostazioni di Sistema → Privacy e sicurezza → Accessibilità → abilita TypeClipboard**
+**System Settings → Privacy & Security → Accessibility → enable TypeClipboard**
 
-La finestra Impostazioni dell'app mostra lo stato del permesso e un pulsante per aprire direttamente il pannello.
+The app's Settings window displays live permission status and includes a button to open the pane directly.
 
 > [!NOTE]
-> Con la firma ad-hoc, dopo ogni ricompilazione macOS può considerare l'app "nuova".
-> Se la digitazione smette di funzionare, rimuovi TypeClipboard dalla lista Accessibilità e aggiungilo di nuovo.
+> With ad-hoc signing, macOS may treat the app as a new binary after rebuilding.
+> If typing stops working after an update, remove TypeClipboard from the Accessibility list and add it back.
 
-## Uso
+## Usage
 
-1. Copia un testo (⌘C).
-2. Porta in primo piano la finestra di destinazione (console VM, TeamViewer…).
-3. Premi **⌃⌥V** e rilascia i tasti: il testo viene digitato.
-4. Premi **Esc** per interrompere.
+1. Copy any text (`⌘C`).
+2. Focus the target window (VM console, TeamViewer, etc.).
+3. Press **⌃⌥V** and release the modifier keys: the clipboard text will be typed out.
+4. Press **Esc** to stop typing mid-stream.
 
-Dall'icona ⌨️ nella barra dei menu → **Impostazioni…** puoi:
+From the ⌨️ menu bar icon → **Impostazioni…** you can configure:
 
-| Opzione | Default | Descrizione |
+| Option | Default | Description |
 |---|---|---|
-| Scorciatoia | ⌃⌥V | Clicca e premi la nuova combinazione (serve almeno ⌘, ⌃ o ⌥) |
-| Ritardo tra i tasti | 10 ms | Aumentalo se la console remota perde caratteri |
-| Ritardo iniziale | 300 ms | Attesa prima di iniziare a digitare |
-| Avvia al login | off | Avvio automatico all'accesso |
+| Global shortcut | `⌃⌥V` | Click the keycap pill and press a new key combination (requires at least `⌘`, `⌃`, or `⌥`) |
+| Keystroke delay | `10 ms` | Increase if a slow remote console drops characters |
+| Initial delay | `300 ms` | Delay before typing begins |
+| Launch at login | `off` | Automatically start TypeClipboard when you log in |
 
-## Limitazioni note
+## Known Limitations
 
-- Il layout di tastiera della macchina remota deve corrispondere a quello del Mac.
-- I caratteri che sul layout attivo richiedono tasti morti (es. `~` su alcuni layout) usano il ripiego Unicode,
-  che alcune console remote potrebbero ignorare.
+- The keyboard layout on the remote machine should match your Mac's active layout.
+- Characters that require dead keys on the active layout (e.g., `~` on some layouts) fall back to Unicode input, which some remote consoles may ignore.
 
-## Struttura del progetto
+## Project Structure
 
 ```
 Sources/TypeClipboard/
-├── App.swift                  # entry point, menu bar, permessi
-├── HotKeyManager.swift        # scorciatoia globale (Carbon)
-├── KeyboardLayoutMapper.swift # carattere → tasto fisico del layout attivo
-├── Typer.swift                # invio eventi CGEvent
-└── SettingsView.swift         # impostazioni e registratore scorciatoia
+├── App.swift                  # entry point, menu bar & permissions
+├── HotKeyManager.swift        # global hotkey registration (Carbon)
+├── KeyboardLayoutMapper.swift # character → physical keycode mapper (UCKeyTranslate)
+├── Typer.swift                # CGEvent keystroke synthesizer
+└── SettingsView.swift         # Liquid Glass settings UI & shortcut recorder
 Resources/Info.plist
-build.sh                       # build + bundle .app + zip
-VERSION                        # versione corrente (SemVer)
+build.sh                       # release build + .app bundle + zip archive
+VERSION                        # single source of truth for version (SemVer)
 CHANGELOG.md
 ```
 
 ## Versioning
 
-Il progetto segue il [Semantic Versioning](https://semver.org/lang/it/). Per rilasciare una nuova versione:
+This project follows [Semantic Versioning](https://semver.org/). To cut a new release:
 
-1. aggiorna `VERSION` e `CHANGELOG.md`;
-2. `git commit -am "Release vX.Y.Z" && git tag vX.Y.Z && git push --follow-tags`;
-3. `./build.sh` e allega `build/TypeClipboard-X.Y.Z.zip` alla release su GitHub.
+1. Update `VERSION` and `CHANGELOG.md`.
+2. `git commit -am "Release vX.Y.Z" && git tag vX.Y.Z && git push --follow-tags`
+3. Run `./build.sh` and attach `build/TypeClipboard-X.Y.Z.zip` to the GitHub Release.
 
-## Licenza
+## License
 
-MIT – vedi [LICENSE](LICENSE).
+MIT – see [LICENSE](LICENSE).
